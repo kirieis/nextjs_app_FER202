@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 
 export default function LoginPage() {
+  const [isDarkMode, setIsDarkMode] = useState(false);
   const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
@@ -23,31 +24,30 @@ export default function LoginPage() {
     setTimeout(() => {
       setIsLoading(false);
       setSubmittedInfo(`Welcome back, ${identifier}! (UI demo only)`);
-    }, 800);
+    }, 600);
   };
 
   return (
-    <div className="relative min-h-screen flex items-center justify-center bg-black text-white p-4 sm:p-6 lg:p-8 overflow-hidden font-sans select-none">
-      {/* Ambient background glow: Red & Purple against pitch black */}
-      <div className="pointer-events-none absolute -top-32 -left-32 h-[420px] w-[420px] rounded-full bg-red-600/20 blur-[130px]" />
-      <div className="pointer-events-none absolute -bottom-32 -right-32 h-[420px] w-[420px] rounded-full bg-purple-700/25 blur-[130px]" />
-      <div className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-72 w-72 rounded-full bg-red-900/10 blur-[100px]" />
-
-      {/* Grid pattern overlay */}
-      <div 
-        className="pointer-events-none absolute inset-0 opacity-[0.03]" 
-        style={{
-          backgroundImage: `radial-gradient(circle at 1px 1px, white 1px, transparent 0)`,
-          backgroundSize: "28px 28px",
-        }}
-      />
-
+    <div
+      className={`relative min-h-screen flex items-center justify-center p-4 sm:p-6 lg:p-8 transition-colors duration-300 font-sans ${isDarkMode ? "bg-black text-white" : "bg-gray-50 text-gray-900"
+        }`}
+    >
       <div className="relative w-full max-w-md">
         {/* Main Card */}
-        <div className="rounded-2xl border border-zinc-800/90 bg-zinc-950/85 backdrop-blur-2xl p-6 sm:p-8 shadow-2xl shadow-black/90 ring-1 ring-white/5 transition-all">
+        <div
+          className={`rounded-2xl border p-6 sm:p-8 transition-all duration-300 ${isDarkMode
+            ? "border-zinc-800 bg-zinc-900/90 shadow-2xl shadow-black/80"
+            : "border-gray-200 bg-white shadow-xl shadow-gray-200/60"
+            }`}
+        >
           {/* Header */}
           <div className="text-center mb-8">
-            <div className="inline-flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-red-600 via-rose-600 to-purple-700 text-white shadow-lg shadow-red-600/30 mb-3.5 ring-1 ring-white/20">
+            <div
+              className={`inline-flex h-12 w-12 items-center justify-center rounded-xl mb-3.5 transition-colors ${isDarkMode
+                ? "bg-zinc-800 text-white border border-zinc-700"
+                : "bg-gray-100 text-gray-900 border border-gray-200"
+                }`}
+            >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="h-6 w-6"
@@ -63,20 +63,31 @@ export default function LoginPage() {
                 />
               </svg>
             </div>
-            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-white">
+            <h1
+              className={`text-2xl sm:text-3xl font-bold tracking-tight ${isDarkMode ? "text-white" : "text-gray-900"
+                }`}
+            >
               Sign in to your account
             </h1>
-            <p className="mt-2 text-sm text-zinc-400">
-              Enter your credentials below to access your dashboard
+            <p
+              className={`mt-2 text-sm ${isDarkMode ? "text-zinc-400" : "text-gray-500"
+                }`}
+            >
+              Enter your credentials below to continue
             </p>
           </div>
 
           {/* Success Banner (Mock Demo) */}
           {submittedInfo && (
-            <div className="mb-6 flex items-start gap-3 rounded-lg border border-purple-500/40 bg-purple-950/40 p-3.5 text-sm text-purple-200 animate-in fade-in duration-300">
+            <div
+              className={`mb-6 flex items-start gap-3 rounded-lg border p-3.5 text-sm animate-in fade-in duration-300 ${isDarkMode
+                ? "border-emerald-500/40 bg-emerald-950/40 text-emerald-300"
+                : "border-emerald-500/30 bg-emerald-50 text-emerald-800"
+                }`}
+            >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5 shrink-0 text-purple-400"
+                className="h-5 w-5 shrink-0 text-emerald-500"
                 viewBox="0 0 20 20"
                 fill="currentColor"
               >
@@ -96,12 +107,16 @@ export default function LoginPage() {
             <div>
               <label
                 htmlFor="identifier"
-                className="block text-sm font-medium text-zinc-200 mb-1.5"
+                className={`block text-sm font-medium mb-1.5 ${isDarkMode ? "text-zinc-200" : "text-gray-700"
+                  }`}
               >
                 Email or Username
               </label>
               <div className="relative">
-                <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-zinc-500">
+                <div
+                  className={`pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 ${isDarkMode ? "text-zinc-500" : "text-gray-400"
+                    }`}
+                >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     className="h-5 w-5"
@@ -124,7 +139,10 @@ export default function LoginPage() {
                   value={identifier}
                   onChange={(e) => setIdentifier(e.target.value)}
                   placeholder="name@example.com or username"
-                  className="w-full rounded-lg border border-zinc-800 bg-zinc-900/90 py-2.5 pl-10 pr-4 text-sm text-white placeholder:text-zinc-500 focus:border-purple-500 focus:bg-zinc-900 focus:outline-none focus:ring-2 focus:ring-purple-500/25 transition duration-150"
+                  className={`w-full rounded-lg border py-2.5 pl-10 pr-4 text-sm transition duration-150 focus:outline-none focus:ring-2 ${isDarkMode
+                    ? "border-zinc-700 bg-zinc-950 text-white placeholder:text-zinc-500 focus:border-white focus:ring-white/20"
+                    : "border-gray-300 bg-white text-gray-900 placeholder:text-gray-400 focus:border-black focus:ring-black/10"
+                    }`}
                 />
               </div>
             </div>
@@ -134,20 +152,27 @@ export default function LoginPage() {
               <div className="flex items-center justify-between mb-1.5">
                 <label
                   htmlFor="password"
-                  className="block text-sm font-medium text-zinc-200"
+                  className={`block text-sm font-medium ${isDarkMode ? "text-zinc-200" : "text-gray-700"
+                    }`}
                 >
                   Password
                 </label>
                 <button
                   type="button"
-                  className="text-xs font-medium text-purple-400 hover:text-red-400 transition-colors"
+                  className={`text-xs font-medium transition-colors ${isDarkMode
+                    ? "text-zinc-400 hover:text-white"
+                    : "text-gray-600 hover:text-black"
+                    }`}
                   onClick={() => alert("Forgot password clicked (UI demo)")}
                 >
                   Forgot password?
                 </button>
               </div>
               <div className="relative">
-                <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-zinc-500">
+                <div
+                  className={`pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 ${isDarkMode ? "text-zinc-500" : "text-gray-400"
+                    }`}
+                >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     className="h-5 w-5"
@@ -170,12 +195,18 @@ export default function LoginPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Enter your password"
-                  className="w-full rounded-lg border border-zinc-800 bg-zinc-900/90 py-2.5 pl-10 pr-10 text-sm text-white placeholder:text-zinc-500 focus:border-purple-500 focus:bg-zinc-900 focus:outline-none focus:ring-2 focus:ring-purple-500/25 transition duration-150"
+                  className={`w-full rounded-lg border py-2.5 pl-10 pr-10 text-sm transition duration-150 focus:outline-none focus:ring-2 ${isDarkMode
+                    ? "border-zinc-700 bg-zinc-950 text-white placeholder:text-zinc-500 focus:border-white focus:ring-white/20"
+                    : "border-gray-300 bg-white text-gray-900 placeholder:text-gray-400 focus:border-black focus:ring-black/10"
+                    }`}
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute inset-y-0 right-0 flex items-center pr-3.5 text-zinc-500 hover:text-zinc-200 transition-colors"
+                  className={`absolute inset-y-0 right-0 flex items-center pr-3.5 transition-colors ${isDarkMode
+                    ? "text-zinc-500 hover:text-zinc-200"
+                    : "text-gray-400 hover:text-gray-700"
+                    }`}
                   aria-label={showPassword ? "Hide password" : "Show password"}
                 >
                   {showPassword ? (
@@ -225,11 +256,15 @@ export default function LoginPage() {
                 type="checkbox"
                 checked={rememberMe}
                 onChange={(e) => setRememberMe(e.target.checked)}
-                className="h-4 w-4 rounded border-zinc-800 bg-zinc-900 text-purple-600 focus:ring-purple-500 focus:ring-offset-black accent-purple-600"
+                className={`h-4 w-4 rounded transition-colors ${isDarkMode
+                  ? "border-zinc-700 bg-zinc-950 text-white accent-white focus:ring-white"
+                  : "border-gray-300 bg-white text-black accent-black focus:ring-black"
+                  }`}
               />
               <label
                 htmlFor="remember-me"
-                className="ml-2 block text-sm text-zinc-300 cursor-pointer hover:text-white transition-colors"
+                className={`ml-2 block text-sm cursor-pointer select-none ${isDarkMode ? "text-zinc-300 hover:text-white" : "text-gray-700 hover:text-black"
+                  }`}
               >
                 Remember me for 30 days
               </label>
@@ -239,12 +274,15 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full relative overflow-hidden flex items-center justify-center rounded-lg bg-gradient-to-r from-red-600 via-rose-600 to-purple-600 py-2.5 px-4 text-sm font-semibold text-white shadow-lg shadow-red-950/60 hover:from-red-500 hover:via-rose-500 hover:to-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-500/40 disabled:opacity-60 disabled:cursor-not-allowed transition-all duration-200 active:scale-[0.99]"
+              className={`w-full flex items-center justify-center rounded-lg py-2.5 px-4 text-sm font-semibold transition-all duration-150 active:scale-[0.99] disabled:opacity-60 disabled:cursor-not-allowed ${isDarkMode
+                ? "bg-white text-black hover:bg-zinc-200 focus:outline-none focus:ring-2 focus:ring-white/40"
+                : "bg-black text-white hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-black/40"
+                }`}
             >
               {isLoading ? (
                 <span className="inline-flex items-center gap-2">
                   <svg
-                    className="h-4 w-4 animate-spin text-white"
+                    className={`h-4 w-4 animate-spin ${isDarkMode ? "text-black" : "text-white"}`}
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -273,19 +311,33 @@ export default function LoginPage() {
 
           {/* Divider */}
           <div className="mt-6 flex items-center justify-center">
-            <div className="w-full border-t border-zinc-800/80" />
-            <span className="bg-zinc-950 px-3 text-xs text-zinc-500 uppercase tracking-wider">
+            <div
+              className={`w-full border-t ${isDarkMode ? "border-zinc-800" : "border-gray-200"
+                }`}
+            />
+            <span
+              className={`px-3 text-xs uppercase tracking-wider ${isDarkMode
+                ? "bg-zinc-900 text-zinc-500"
+                : "bg-white text-gray-400"
+                }`}
+            >
               or
             </span>
-            <div className="w-full border-t border-zinc-800/80" />
+            <div
+              className={`w-full border-t ${isDarkMode ? "border-zinc-800" : "border-gray-200"
+                }`}
+            />
           </div>
 
-          {/* Social Logins (UI Demo) */}
+          {/* Social Logins */}
           <div className="mt-6 grid grid-cols-2 gap-3">
             <button
               type="button"
               onClick={() => alert("Google Login clicked (UI demo)")}
-              className="flex w-full items-center justify-center gap-2 rounded-lg border border-zinc-800 bg-zinc-900/60 py-2 px-3 text-xs font-medium text-zinc-300 hover:bg-zinc-800 hover:text-white hover:border-zinc-700 transition duration-150"
+              className={`flex w-full items-center justify-center gap-2 rounded-lg border py-2 px-3 text-xs font-medium transition duration-150 ${isDarkMode
+                ? "border-zinc-800 bg-zinc-950/80 text-zinc-300 hover:bg-zinc-800 hover:text-white hover:border-zinc-700"
+                : "border-gray-200 bg-gray-50 text-gray-700 hover:bg-gray-100 hover:text-black hover:border-gray-300"
+                }`}
             >
               <svg className="h-4 w-4" viewBox="0 0 24 24">
                 <path
@@ -310,7 +362,10 @@ export default function LoginPage() {
             <button
               type="button"
               onClick={() => alert("GitHub Login clicked (UI demo)")}
-              className="flex w-full items-center justify-center gap-2 rounded-lg border border-zinc-800 bg-zinc-900/60 py-2 px-3 text-xs font-medium text-zinc-300 hover:bg-zinc-800 hover:text-white hover:border-zinc-700 transition duration-150"
+              className={`flex w-full items-center justify-center gap-2 rounded-lg border py-2 px-3 text-xs font-medium transition duration-150 ${isDarkMode
+                ? "border-zinc-800 bg-zinc-950/80 text-zinc-300 hover:bg-zinc-800 hover:text-white hover:border-zinc-700"
+                : "border-gray-200 bg-gray-50 text-gray-700 hover:bg-gray-100 hover:text-black hover:border-gray-300"
+                }`}
             >
               <svg className="h-4 w-4 fill-current" viewBox="0 0 24 24">
                 <path
@@ -324,7 +379,10 @@ export default function LoginPage() {
           </div>
 
           {/* Footer link */}
-          <p className="mt-8 text-center text-xs text-zinc-400">
+          <p
+            className={`mt-8 text-center text-xs ${isDarkMode ? "text-zinc-400" : "text-gray-500"
+              }`}
+          >
             Don&apos;t have an account?{" "}
             <a
               href="#signup"
@@ -332,13 +390,67 @@ export default function LoginPage() {
                 e.preventDefault();
                 alert("Sign up clicked (UI demo)");
               }}
-              className="font-semibold text-purple-400 hover:text-red-400 underline underline-offset-2 transition-colors"
+              className={`font-semibold underline underline-offset-2 transition-colors ${isDarkMode
+                ? "text-white hover:text-zinc-300"
+                : "text-black hover:text-gray-700"
+                }`}
             >
               Sign up now
             </a>
           </p>
         </div>
       </div>
+
+      {/* Theme Toggle Button at Bottom Right */}
+      <button
+        type="button"
+        onClick={() => setIsDarkMode(!isDarkMode)}
+        className={`fixed bottom-6 right-6 z-50 flex items-center gap-2.5 rounded-full px-4 py-2.5 text-xs font-semibold shadow-xl transition-all duration-200 hover:scale-105 active:scale-95 ${isDarkMode
+          ? "bg-white text-black border border-zinc-200 shadow-white/10 hover:bg-zinc-100"
+          : "bg-black text-white border border-gray-800 shadow-black/20 hover:bg-gray-800"
+          }`}
+        aria-label="Toggle theme mode"
+      >
+        {isDarkMode ? (
+          <>
+            {/* Sun Icon for Light Mode switch */}
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-4 w-4"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2}
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
+              />
+            </svg>
+            <span>Light Mode</span>
+          </>
+        ) : (
+          <>
+            {/* Moon Icon for Dark Mode switch */}
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-4 w-4"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2}
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"
+              />
+            </svg>
+            <span>Dark Mode</span>
+          </>
+        )}
+      </button>
     </div>
   );
 }
