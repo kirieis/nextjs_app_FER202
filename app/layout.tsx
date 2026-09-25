@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Login | Welcome Back",
-  description: "Sign in to access your account dashboard",
+  title: "ProductHub | Product Listing & Store",
+  description: "Browse our collection of featured products",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
