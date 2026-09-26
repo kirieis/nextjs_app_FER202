@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "ProductHub | Product Listing & Store",
+  title: "EmarkShop | Product Listing & Store",
   description: "Browse our collection of featured products",
 };
 
