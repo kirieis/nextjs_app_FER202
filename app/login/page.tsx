@@ -2,6 +2,8 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -18,7 +20,10 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
-  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  // Error message returned by Supabase (e.g. "Invalid login credentials")
+  const [authError, setAuthError] = useState<string | null>(null);
+  const { signIn } = useAuth();
+  const router = useRouter();
 
   const isValidEmail = (value: string) => {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
@@ -44,8 +49,9 @@ export default function LoginPage() {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setAuthError(null);
     const newErrors: { email?: string; password?: string } = {};
 
     // Validate email
@@ -62,10 +68,15 @@ export default function LoginPage() {
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
-      setSuccessMessage(null);
     } else {
       setErrors({});
-      setSuccessMessage("Login successful (demo)");
+      // Real login through Supabase (via AuthContext)
+      const { error } = await signIn(email, password);
+      if (error) {
+        setAuthError(error.message);
+      } else {
+        router.push("/");
+      }
     }
   };
 
@@ -78,12 +89,12 @@ export default function LoginPage() {
             <CardDescription>Enter your email and password to access your account</CardDescription>
           </CardHeader>
           <CardContent>
-            {successMessage && (
+            {authError && (
               <div
-                data-testid="form-success"
-                className="mb-5 rounded-lg border border-green-500/40 bg-green-500/10 p-3.5 text-sm text-green-700 dark:text-green-300 font-medium"
+                data-testid="error-auth"
+                className="mb-5 rounded-lg border border-destructive/40 bg-destructive/10 p-3.5 text-sm text-destructive font-medium"
               >
-                {successMessage}
+                {authError}
               </div>
             )}
 

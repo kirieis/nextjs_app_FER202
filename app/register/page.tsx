@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
+import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -26,6 +27,9 @@ export default function RegisterPage() {
     confirmPassword?: string;
   }>({});
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  // Error message returned by Supabase (e.g. "User already registered")
+  const [authError, setAuthError] = useState<string | null>(null);
+  const { signUp } = useAuth();
 
   const isValidEmail = (value: string) => {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
@@ -67,8 +71,9 @@ export default function RegisterPage() {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setAuthError(null);
     const newErrors: {
       name?: string;
       email?: string;
@@ -107,7 +112,14 @@ export default function RegisterPage() {
       setSuccessMessage(null);
     } else {
       setErrors({});
-      setSuccessMessage("Registration successful (demo)");
+      // Real sign-up through Supabase (via AuthContext)
+      const { error } = await signUp(email, password);
+      if (error) {
+        setSuccessMessage(null);
+        setAuthError(error.message);
+      } else {
+        setSuccessMessage("Registration successful");
+      }
     }
   };
 
@@ -126,6 +138,15 @@ export default function RegisterPage() {
                 className="mb-5 rounded-lg border border-green-500/40 bg-green-500/10 p-3.5 text-sm text-green-700 dark:text-green-300 font-medium"
               >
                 {successMessage}
+              </div>
+            )}
+
+            {authError && (
+              <div
+                data-testid="error-auth"
+                className="mb-5 rounded-lg border border-destructive/40 bg-destructive/10 p-3.5 text-sm text-destructive font-medium"
+              >
+                {authError}
               </div>
             )}
 

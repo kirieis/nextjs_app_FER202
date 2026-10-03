@@ -4,11 +4,14 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { products } from "@/data/products";
 import { ProductCard } from "@/components/ProductCard";
-import { buttonVariants } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function HomePage() {
   const [searchQuery, setSearchQuery] = useState("");
+  // Read auth state from AuthContext (no props needed)
+  const { user, signOut } = useAuth();
 
   const filteredProducts = products.filter(
     (product) =>
@@ -33,30 +36,53 @@ export default function HomePage() {
 
           {/* Navigation with Bigger Buttons */}
           <nav className="flex items-center gap-3 sm:gap-4">
-            <Link
-              href="/login"
-              data-testid="btn-login"
-              className={buttonVariants({
-                variant: "outline",
-                size: "default",
-                className:
-                  "px-5 py-2.5 text-sm sm:text-base font-semibold border-2 hover:bg-muted transition-all duration-150",
-              })}
-            >
-              Login
-            </Link>
-            <Link
-              href="/register"
-              data-testid="btn-register"
-              className={buttonVariants({
-                variant: "default",
-                size: "default",
-                className:
-                  "px-5 py-2.5 text-sm sm:text-base font-semibold shadow-md hover:shadow-lg transition-all duration-150",
-              })}
-            >
-              Register
-            </Link>
+            {user ? (
+              <>
+                {/* Logged in: show email + logout */}
+                <span
+                  data-testid="user-email"
+                  className="text-sm sm:text-base font-medium text-foreground truncate max-w-[160px] sm:max-w-xs"
+                >
+                  {user.email}
+                </span>
+                <Button
+                  type="button"
+                  variant="outline"
+                  data-testid="btn-logout"
+                  onClick={() => signOut()}
+                  className="px-5 py-2.5 text-sm sm:text-base font-semibold border-2 hover:bg-muted transition-all duration-150"
+                >
+                  Logout
+                </Button>
+              </>
+            ) : (
+              <>
+                <Link
+                  href="/login"
+                  data-testid="btn-login"
+                  className={buttonVariants({
+                    variant: "outline",
+                    size: "default",
+                    className:
+                      "px-5 py-2.5 text-sm sm:text-base font-semibold border-2 hover:bg-muted transition-all duration-150",
+                  })}
+                >
+                  Login
+                </Link>
+                <Link
+                  href="/register"
+                  data-testid="btn-register"
+                  className={buttonVariants({
+                    variant: "default",
+                    size: "default",
+                    className:
+                      "px-5 py-2.5 text-sm sm:text-base font-semibold shadow-md hover:shadow-lg transition-all duration-150",
+                  })}
+                >
+                  Register
+                </Link>
+              </>
+            )}
           </nav>
         </div>
       </header>
