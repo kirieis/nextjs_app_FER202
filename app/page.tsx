@@ -1,98 +1,52 @@
-"use client";
-
-import React, { useState } from "react";
+import React from "react";
 import Link from "next/link";
 import { products } from "@/data/products";
 import { ProductCard } from "@/components/ProductCard";
-import { Button, buttonVariants } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { useAuth } from "@/contexts/AuthContext";
+import { Header } from "@/components/Header";
 
-export default function HomePage() {
-  const [searchQuery, setSearchQuery] = useState("");
-  // Read auth state from AuthContext (no props needed)
-  const { user, signOut } = useAuth();
+interface HomePageProps {
+  searchParams: Promise<{
+    q?: string;
+    category?: string;
+  }>;
+}
 
-  const filteredProducts = products.filter(
-    (product) =>
-      product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      product.description.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+export default async function HomePage({ searchParams }: HomePageProps) {
+  const { q, category } = await searchParams;
+
+  const searchQuery = (q || "").trim().toLowerCase();
+  const selectedCategory = (category || "").trim().toLowerCase();
+
+  // Extract unique categories from products
+  const categories = Array.from(
+    new Set(products.map((p) => p.category))
+  ).sort();
+
+  // Server-side filtering
+  const filteredProducts = products.filter((product) => {
+    const matchesQuery =
+      !searchQuery ||
+      product.name.toLowerCase().includes(searchQuery) ||
+      product.description.toLowerCase().includes(searchQuery);
+
+    const matchesCategory =
+      !selectedCategory ||
+      product.category.toLowerCase() === selectedCategory;
+
+    return matchesQuery && matchesCategory;
+  });
 
   return (
     <div className="min-h-screen flex flex-col bg-background text-foreground">
       {/* Header */}
-      <header className="sticky top-0 z-50 w-full border-b border-border/70 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container mx-auto flex h-20 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-          {/* Logo / Brand Name */}
-          <Link href="/" className="flex items-center gap-2.5 font-bold text-2xl tracking-tight">
-            <span className="h-10 w-10 rounded-xl bg-primary flex items-center justify-center text-primary-foreground font-black text-xl shadow-md">
-              E
-            </span>
-            <span className="bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-foreground">
-              EmarkShop
-            </span>
-          </Link>
-
-          {/* Navigation with Bigger Buttons */}
-          <nav className="flex items-center gap-3 sm:gap-4">
-            {user ? (
-              <>
-                {/* Logged in: show email + logout */}
-                <span
-                  data-testid="user-email"
-                  className="text-sm sm:text-base font-medium text-foreground truncate max-w-[160px] sm:max-w-xs"
-                >
-                  {user.email}
-                </span>
-                <Button
-                  type="button"
-                  variant="outline"
-                  data-testid="btn-logout"
-                  onClick={() => signOut()}
-                  className="px-5 py-2.5 text-sm sm:text-base font-semibold border-2 hover:bg-muted transition-all duration-150"
-                >
-                  Logout
-                </Button>
-              </>
-            ) : (
-              <>
-                <Link
-                  href="/login"
-                  data-testid="btn-login"
-                  className={buttonVariants({
-                    variant: "outline",
-                    size: "default",
-                    className:
-                      "px-5 py-2.5 text-sm sm:text-base font-semibold border-2 hover:bg-muted transition-all duration-150",
-                  })}
-                >
-                  Login
-                </Link>
-                <Link
-                  href="/register"
-                  data-testid="btn-register"
-                  className={buttonVariants({
-                    variant: "default",
-                    size: "default",
-                    className:
-                      "px-5 py-2.5 text-sm sm:text-base font-semibold shadow-md hover:shadow-lg transition-all duration-150",
-                  })}
-                >
-                  Register
-                </Link>
-              </>
-            )}
-          </nav>
-        </div>
-      </header>
+      <Header />
 
       {/* Main Content */}
       <main className="flex-1 container mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         {/* Introduction Section */}
-        <section className="mb-10 text-center sm:text-left rounded-2xl bg-muted/30 border border-border/60 p-6 sm:p-10 shadow-sm">
+        <section className="mb-10 text-center sm:text-left rounded-2xl bg-card border border-border p-6 sm:p-10 shadow-xs">
           <div className="max-w-3xl">
-            <div className="inline-flex items-center rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary mb-3">
+            <div className="inline-flex items-center rounded-full bg-secondary/30 text-secondary-foreground px-3 py-1 text-xs font-semibold uppercase tracking-wider mb-3">
               Premium Tech &amp; Lifestyle Store
             </div>
             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-foreground">
@@ -104,49 +58,73 @@ export default function HomePage() {
             </p>
           </div>
 
-          {/* Search Bar */}
-          <div className="mt-6 max-w-xl">
-            <div className="relative">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="absolute left-3.5 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground pointer-events-none"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth={2}
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                />
-              </svg>
-              <Input
+          {/* Section 2.3: URL-Driven GET Form */}
+          <form
+            method="get"
+            action="/"
+            className="mt-6 flex flex-col sm:flex-row items-stretch sm:items-center gap-3 max-w-2xl"
+          >
+            {/* search-input (name="q") */}
+            <div className="relative flex-1">
+              <input
                 type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                name="q"
+                defaultValue={q || ""}
+                data-testid="search-input"
                 placeholder="Search products by name or description..."
-                className="h-11 pl-11 pr-10 text-sm sm:text-base rounded-xl border-border bg-background shadow-xs focus-visible:ring-2"
-                aria-label="Search products"
+                className="w-full h-11 px-4 text-sm rounded-xl border border-input bg-background text-foreground shadow-xs focus:outline-none focus:ring-2 focus:ring-ring"
               />
-              {searchQuery && (
-                <button
-                  type="button"
-                  onClick={() => setSearchQuery("")}
-                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-xs text-muted-foreground hover:text-foreground p-1"
-                  aria-label="Clear search"
-                >
-                  ✕
-                </button>
-              )}
             </div>
-            {searchQuery && (
-              <p className="mt-2 text-xs text-muted-foreground">
-                Showing results for &ldquo;{searchQuery}&rdquo; ({filteredProducts.length} product
-                {filteredProducts.length === 1 ? "" : "s"} found)
-              </p>
-            )}
-          </div>
+
+            {/* category-select (name="category") */}
+            <div className="w-full sm:w-48">
+              <select
+                name="category"
+                defaultValue={category || ""}
+                data-testid="category-select"
+                className="w-full h-11 px-3 text-sm rounded-xl border border-input bg-background text-foreground shadow-xs focus:outline-none focus:ring-2 focus:ring-ring"
+              >
+                <option value="">All</option>
+                {categories.map((cat) => (
+                  <option key={cat} value={cat}>
+                    {cat}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* btn-search */}
+            <button
+              type="submit"
+              data-testid="btn-search"
+              className="h-11 px-6 rounded-xl bg-primary text-primary-foreground font-semibold text-sm hover:bg-primary/90 transition shadow-xs"
+            >
+              Search
+            </button>
+          </form>
+
+          {/* Reset filter badge if query or category active */}
+          {(q || category) && (
+            <div className="mt-4 flex items-center gap-2 text-xs text-muted-foreground">
+              <span>Active filters:</span>
+              {q && (
+                <span className="bg-secondary/40 text-secondary-foreground px-2 py-0.5 rounded-md font-medium">
+                  &ldquo;{q}&rdquo;
+                </span>
+              )}
+              {category && (
+                <span className="bg-secondary/40 text-secondary-foreground px-2 py-0.5 rounded-md font-medium">
+                  Category: {category}
+                </span>
+              )}
+              <Link
+                href="/"
+                className="text-primary hover:underline font-semibold ml-2"
+              >
+                Clear all filters
+              </Link>
+            </div>
+          )}
         </section>
 
         {/* Section Heading */}
@@ -155,32 +133,39 @@ export default function HomePage() {
             Featured Products
           </h2>
           <span className="text-sm text-muted-foreground font-medium">
-            {filteredProducts.length} items available
+            {filteredProducts.length} items found
           </span>
         </div>
 
-        {/* Product Grid */}
-        <div
-          data-testid="product-list"
-          className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-3 gap-6"
-        >
-          {filteredProducts.map((product) => (
-            <ProductCard key={product.id} product={product} />
-          ))}
-        </div>
-
-        {filteredProducts.length === 0 && (
-          <div className="py-16 text-center">
-            <p className="text-lg font-medium text-muted-foreground">
-              No products found matching &ldquo;{searchQuery}&rdquo;
+        {/* Product Grid or No-Results */}
+        {filteredProducts.length === 0 ? (
+          <div
+            data-testid="no-results"
+            className="py-16 text-center border-2 border-dashed border-border/70 rounded-2xl p-8 bg-card"
+          >
+            <div className="text-4xl mb-3">🔍</div>
+            <h3 className="text-lg font-semibold text-foreground mb-1">
+              No matching products found
+            </h3>
+            <p className="text-muted-foreground text-sm max-w-sm mx-auto mb-6">
+              We couldn&apos;t find any products matching your search criteria.
+              Try adjusting your query or category filter.
             </p>
-            <button
-              type="button"
-              onClick={() => setSearchQuery("")}
-              className="mt-3 text-sm text-primary font-semibold hover:underline"
+            <Link
+              href="/"
+              className="inline-flex items-center justify-center px-6 py-2.5 rounded-lg bg-primary text-primary-foreground font-semibold hover:bg-primary/90 transition shadow-xs text-sm"
             >
-              Clear search and view all products
-            </button>
+              Reset filters &amp; view all
+            </Link>
+          </div>
+        ) : (
+          <div
+            data-testid="product-list"
+            className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-3 gap-6"
+          >
+            {filteredProducts.map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
           </div>
         )}
       </main>

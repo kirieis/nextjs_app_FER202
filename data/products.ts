@@ -1,52 +1,59 @@
 export interface Product {
-  id: string;
+  id: number;
   name: string;
-  image: string;
+  price: number;
   description: string;
-  price: string;
+  category: string;
+  image: string;
 }
 
 export const products: Product[] = [
   {
-    id: "1",
+    id: 1,
     name: "Wireless Noise-Canceling Headphones",
-    image: "/products/headphones.jpg",
+    price: 199.99,
     description: "Premium over-ear headphones with active noise cancellation and 30-hour battery life.",
-    price: "$199.99",
+    category: "Audio",
+    image: "/products/headphones.jpg",
   },
   {
-    id: "2",
+    id: 2,
     name: "Smart Fitness Watch",
-    image: "/products/smartwatch.jpg",
+    price: 149.5,
     description: "Water-resistant smartwatch with real-time heart rate monitoring, GPS, and OLED display.",
-    price: "$149.50",
+    category: "Wearables",
+    image: "/products/smartwatch.jpg",
   },
   {
-    id: "3",
+    id: 3,
     name: "Digital Mirrorless Camera",
-    image: "/products/camera.jpg",
+    price: 799.0,
     description: "High-resolution 4K video recording with ultra-fast autofocus and interchangeable lenses.",
-    price: "$799.00",
+    category: "Photography",
+    image: "/products/camera.jpg",
   },
   {
-    id: "4",
+    id: 4,
     name: "RGB Mechanical Keyboard",
-    image: "/products/keyboard.jpg",
+    price: 89.99,
     description: "Customizable hot-swappable switches with dynamic per-key backlighting and wrist rest.",
-    price: "$89.99",
+    category: "Accessories",
+    image: "/products/keyboard.jpg",
   },
   {
-    id: "5",
+    id: 5,
     name: "Ergonomic Wireless Mouse",
-    image: "/products/mouse.jpg",
+    price: 49.99,
     description: "Precision laser sensor with multi-device Bluetooth pairing and silent click buttons.",
-    price: "$49.99",
+    category: "Accessories",
+    image: "/products/mouse.jpg",
   },
   {
-    id: "6",
+    id: 6,
     name: "Waterproof Travel Backpack",
-    image: "/products/backpack.jpg",
+    price: 59.95,
     description: "Durable commuter backpack with dedicated padded 15.6-inch laptop compartment and USB port.",
-    price: "$59.95",
+    category: "Gear",
+    image: "/products/backpack.jpg",
   },
 ];

@@ -40,7 +40,7 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# doc
-/input
-lab3.docx
-/lab3
+# private files
+*.docx
+*.xlsx
+LAB4_5_REPORT.md
